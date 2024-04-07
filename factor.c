@@ -1,11 +1,13 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <sys/resource.h>
 /**
  * factorize - fction to factorize number
  * @number: given value
  *
  * Return: nothing
  */
-void factorize(int number)
+void factorize(unsigned long int number)
 {
 	int i, j;
 
@@ -16,7 +18,7 @@ void factorize(int number)
 		if (number % i == 0)
 		{
 			j = number / i;
-			printf("%d=%d*%d\n", number, i, j);
+			printf("%lu=%d*%d\n", number, i, j);
 			return;
 		}
 	}
@@ -46,11 +48,18 @@ int main(int argc, char *argv[])
 		printf("%s Is Empty", argv[1]);
 		return (0);
 	}
-
 	/** looop to go through file**/
 	while (fscanf(file, "%d", &value) == 1)
 		factorize(value);
 
+	printf("\n");
+
+	struct rusage usage;
+	getrusage(RUSAGE_SELF, &usage);
+
+	printf("real    %ldm%.3fs\n", usage.ru_utime.tv_sec / 60, usage.ru_utime.tv_sec % 60 + usage.ru_utime.tv_usec / 1000000.0);
+	printf("user    %ldm%.3fs\n", usage.ru_stime.tv_sec / 60, usage.ru_stime.tv_sec % 60 + usage.ru_stime.tv_usec / 1000000.0);
+	printf("sys     %ldm%.3fs\n", usage.ru_stime.tv_sec / 60, usage.ru_stime.tv_sec % 60 + usage.ru_stime.tv_usec / 1000000.0);
 	fclose(file);
 	return (0);
 }
